@@ -1,0 +1,7 @@
+reg:	ARG
+reg:	REG
+
+reg:	ADD(reg, reg)		[1] => add %rd, %r1, %r2
+reg:	SEL(reg, reg, reg)	[2] => sel %rd, %r1, %r2, %r3
+
+:	RET(reg)		[2] => ret %r1

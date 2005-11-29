@@ -81,6 +81,7 @@ struct asm_rules {
 
 DECLARE_ALLOCATOR(asm_rules);
 
+struct cg_state;
 struct instruction {
 	unsigned opcode:7,
 		 tainted:1,
@@ -89,6 +90,7 @@ struct instruction {
 	struct position pos;
 	struct symbol *type;
 	pseudo_t target;
+	struct cg_state *cg_state;
 	union {
 		struct /* entrypoint */ {
 			struct pseudo_list *arg_list;
