@@ -1,4 +1,4 @@
-archs	+= test
+archs	+= arm
 
 V	:= @
 Q	?= $(V:1=)
