@@ -63,6 +63,8 @@ struct nterm *get_nterm(const char *name)
 		append_nterm(nt);
 		nt->name = name;
 		nt->chain = 0;
+		nt->used = 0;
+		nt->defined = 0;
 	}
 
 	return nt;
@@ -481,6 +483,74 @@ static int process_rules(void)
 }
 
 
+static void mark_nt(struct nterm *nt);
+
+// Mark all the nterms of this rule as being used
+static void mark_rule(struct rule *r)
+{
+	int i;
+
+	mark_nt(r->nt);		// if a chain rule
+
+	for (i = 0; i < NBR_KIDS; i++) {
+		mark_nt(r->kids[i]);
+	}
+}
+
+// Mark this nterm as used.
+// Do the same for all the nterms in all rules defining this nt.
+// If such a rule exist, mark the nt as being defined.
+static void mark_nt(struct nterm *nt)
+{
+	struct rule *r;
+
+	if (!nt)
+		return;
+	if (!nt || nt->used)
+		return;
+
+	nt->used = 1;
+	foreach_rule(r) {
+
+		if (r->lhs != nt)
+			continue;
+
+		mark_rule(r);
+		nt->defined = 1;
+	}
+}
+
+// Check that all the needed nterms exist.
+// Also check that they are used (in itself,
+// this is not  but can indicate a typo or something).
+static int validate_nterms(void)
+{
+	struct nterm *nt;
+	int err = 0;
+
+	mark_nt(nterms);	// 'start' nterms
+
+	foreach_nterm(nt) {
+		const char *msg = NULL;
+		int warning = 0;
+
+		if (!nt->used) {
+			msg = "is unneeded";
+			warning = 1;
+		} else if (!nt->defined) {
+			msg = "is needed but never defined";
+			err++;
+		}
+
+		if (msg) {
+			const char *pre = warning ? "warning" : "error";
+			fprintf(stderr, "%s: nterm '%s' %s.\n", pre, nt->name, msg);
+		}
+	}
+
+	return err;
+}
+
 int main(int argc, const char *argv[])
 {
 	int err = 0;
@@ -489,7 +559,7 @@ int main(int argc, const char *argv[])
 
 	err += read_md(NULL);
 	err += process_rules();
-	// FIXME: check rules, nterm, ...
+	err += validate_nterms();
 	if (err)
 		return 1;
 

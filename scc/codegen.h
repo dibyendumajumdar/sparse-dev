@@ -34,6 +34,8 @@ struct nterm {
 	const char	*name;
 	int		n;
 	unsigned int	chain:1;	// is rhs of a chain rule
+	unsigned int	used:1;		// check for unneeded rules
+	unsigned int	defined:1;	// check for missing  rules
 
 	struct nterm	*next;
 };
