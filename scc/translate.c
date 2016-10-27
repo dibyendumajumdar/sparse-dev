@@ -74,8 +74,14 @@ static struct cg_state *get_src_state(struct basic_block *bb, pseudo_t src)
 
 static void translate_call(struct instruction *insn)
 {
-	struct cg_state *s = alloc_state(INSN_CALL, insn->target, insn);
+	struct cg_state *s;
 	pseudo_t arg;
+	int op;
+
+	op = INSN_CALL;
+	if (is_reglike(insn->func))
+		op = INSN_INDCALL;
+	s = alloc_state(op, insn->target, insn);
 
 	// calls are special because:
 	// * can have an unbounded number of args

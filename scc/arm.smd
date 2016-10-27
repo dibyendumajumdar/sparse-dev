@@ -231,7 +231,9 @@ reg:	SET_NE(reg, zero)	[2] => adds	%rd, %r1, #0; movne	%rd, #1
 
 
 reg:	CALL			[4] => bl	%l1 -> %rd
+reg:	INDCALL(reg)		[4] => blx	%r1 -> %rd
 tcall:	CALL			[4] => b	%l1
+tcall:	INDCALL(reg)		[4] => bx	%r1
 
 :	RET(tcall)		[0] == %a1	// premature tail-call optimization
 :	RET(reg)		[4] => bx	lr (-> %r1)

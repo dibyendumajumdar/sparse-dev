@@ -332,7 +332,9 @@ reg:	SEL(condf, NEG(reg), reg0)	[1] => csneg	%rd, %r21, %r3, %a1
 
 
 reg:	CALL			[1] => bl	%l1 -> %rd
+reg:	INDCALL(reg)		[1] => blr	%r1 -> %rd
 tcall:	CALL			[1] => b	%l1
+tcall:	INDCALL(reg)		[1] => br	%r1
 
 :	RET(tcall)		[0] == %a1	// premature tail call optimization
 :	RET(reg)		[1] => ret	(-> %r1)
