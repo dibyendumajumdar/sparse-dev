@@ -110,6 +110,8 @@ int main(int argc, char **argv)
 
 	bits_in_bool = 8;
 
+	add_pre_buffer("#define __SPARSE_CC__\n");
+
 	sccompile(sparse_initialize(argc, argv, &filelist));
 	FOR_EACH_PTR_NOTAG(filelist, file) {
 		sccompile(sparse(file));
