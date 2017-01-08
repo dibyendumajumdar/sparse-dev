@@ -413,6 +413,12 @@ static void translate_insn(struct instruction *insn)
 		translate_binop(insn);
 		break;
 	case OP_NOT:
+		if (insn->size == 1) {
+			insn->opcode = OP_XOR;
+			insn->src2 = value_pseudo(1);
+			translate_binop(insn);
+			break;
+		}
 	case OP_NEG:
 	case OP_COPY:
 		translate_unop(insn);
