@@ -91,11 +91,13 @@ reg:	LSR(reg, stdop)		[1] => lsr	%rd, %r1, %a2
 reg:	ASR(reg, stdop)		[1] => asr	%rd, %r1, %a2
 reg:	ROR(reg, stdop)		[1] => ror	%rd, %r1, %a2
 
-// sign/zero extension
+// sign/zero extension & truncation
 reg:	ZEXTB(reg)		[1] => uxtb	%rd, %r1
 reg:	ZEXTH(reg)		[1] => uxth	%rd, %r1
 reg:	SEXTB(reg)		[1] => sxtb	%rd, %r1
 reg:	SEXTH(reg)		[1] => sxth	%rd, %r1
+
+reg:	TRUNC(reg, sh)		[1] => ubfx	%rd, %r1, #0, %c2
 
 // bitfield extraction/insertion
 reg:	CAST(reg, sh)		[1] => ubfx	%rd, %r1, #0, %c2
