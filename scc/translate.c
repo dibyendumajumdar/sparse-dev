@@ -318,8 +318,9 @@ static void translate_memop(struct instruction *insn)
 static void translate_cast(struct instruction *insn)
 {
 	struct cg_state *s;
+	struct symbol *otype = insn->orig_type;
 	unsigned int new_size = insn->size;
-	unsigned int old_size = insn->orig_type ? insn->orig_type->bit_size : 0;
+	unsigned int old_size = otype->bit_size;
 	unsigned long long val = 0;
 	enum insncode op = insn->opcode;
 
