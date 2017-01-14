@@ -324,6 +324,13 @@ static void translate_cast(struct instruction *insn)
 	unsigned long long val = 0;
 	enum insncode op = insn->opcode;
 
+	if (op == INSN_PTRCAST) {
+		if (otype->ctype.modifiers & MOD_SIGNED)
+			op = OP_SCAST;
+		else
+			op = OP_CAST;
+	}
+
 	if (new_size < old_size) {
 		op = INSN_AND;
 		val = (1ULL << new_size) - 1;
@@ -430,8 +437,6 @@ static void translate_insn(struct instruction *insn)
 		break;
 
 	case OP_PTRCAST:
-		insn->opcode = OP_CAST;
-		/* Fall through */
 	case OP_CAST:
 	case OP_SCAST:
 		translate_cast(insn);
