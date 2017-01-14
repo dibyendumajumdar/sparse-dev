@@ -134,13 +134,15 @@ reg:	ASR(reg, reg)		[1] => asrv	%rd, %r1, %r2
 reg:	ROR(reg, sh)		[1] => ror	%rd, %r1, %c2
 reg:	ROR(reg, reg)		[1] => rorv	%rd, %r1, %r2
 
-//// sign/zero extension
+//// sign/zero extension & truncation
 reg:	ZEXTB(reg)		[1] => uxtb	%rd, %r1
 reg:	ZEXTH(reg)		[1] => uxth	%rd, %r1
 reg:	ZEXTL(reg)		[1] => uxtw	%rd, %r1
 reg:	SEXTB(reg)		[1] => sxtb	%rd, %r1
 reg:	SEXTH(reg)		[1] => sxth	%rd, %r1
 reg:	SEXTL(reg)		[1] => sxtw	%rd, %r1
+
+reg:	TRUNC(reg, sh)		[1] => and	%rd, %r1, #((1 << %c2) - 1)
 
 //// bitfield extraction/insertion
 //=> bfi
