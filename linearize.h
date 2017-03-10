@@ -35,9 +35,9 @@ struct pseudo {
 	struct pseudo_user_list *users;
 	struct ident *ident;
 	union {
-		struct symbol *sym;
-		struct instruction *def;
-		long long value;
+		struct symbol *sym;	// PSEUDO_SYM & ARG
+		struct instruction *def;// PSEUDO_REG & PHI
+		long long value;	// PSEUDO_VAL
 	};
 	void *priv;
 };
