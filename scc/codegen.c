@@ -455,7 +455,7 @@ static void generate_interface(void)
 	for (op = 0; op < INSN_NBR; op++)
 		generate_op_label(op);
 	printf("	default:\n");
-	printf("		sparse_error(s->insn->pos, \"%%s(): unknown terminal: %%s (%%d)\", __FUNCTION__, name_opcode(s->op), s->op);\n");
+	printf("		sparse_error(insn->pos, \"%%s(): unknown terminal: %%s (%%d)\", __FUNCTION__, name_opcode(s->op), s->op);\n");
 	printf("	}\n");
 	printf("	trace_state(\"label\", cgs);\n");
 	printf("}\n");

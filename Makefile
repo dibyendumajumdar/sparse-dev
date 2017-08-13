@@ -181,7 +181,7 @@ V := @
 Q := $(V:1=)
 
 ########################################################################
-all: $(PROGRAMS)
+all: $(PROGRAMS) scc/
 
 ldflags += $($(@)-ldflags) $(LDFLAGS)
 ldlibs  += $($(@)-ldlibs)  $(LDLIBS)
@@ -204,6 +204,12 @@ cflags   += $($(*)-cflags) $(CPPFLAGS) $(CFLAGS)
 	$(Q) $(CHECKER) $(CHECKER_FLAGS) $(cflags) -c $<
 
 selfcheck: $(OBJS:.o=.sc)
+
+export Q CC CPPFLAGS CFLAGS AR LDFLAGS
+scc/: $(LIBS)
+
+%/: FORCE
+	$(MAKE) -C $@
 
 
 SPARSE_VERSION:=$(shell git describe 2>/dev/null || echo '$(VERSION)')
