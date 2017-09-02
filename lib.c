@@ -258,6 +258,7 @@ int dump_macro_defs = 0;
 
 int dbg_entry = 0;
 int dbg_dead = 0;
+int dbg_postorder = 0;
 
 unsigned long fdump_ir;
 int fmem_report = 0;
@@ -717,6 +718,7 @@ static char **handle_switch_W(char *arg, char **next)
 static struct flag debugs[] = {
 	{ "entry", &dbg_entry},
 	{ "dead", &dbg_dead},
+	{ "postorder", &dbg_postorder},
 };
 
 
