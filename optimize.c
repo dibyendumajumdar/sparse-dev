@@ -12,6 +12,7 @@
 #include "liveness.h"
 #include "flow.h"
 #include "cse.h"
+#include "ssa.h"
 
 int repeat_phase;
 
@@ -58,7 +59,7 @@ void optimize(struct entrypoint *ep)
 	 * Turn symbols into pseudos
 	 */
 	if (fpasses & PASS_MEM2REG)
-		simplify_symbol_usage(ep);
+		ssa_convert(ep);
 	if (fdump_ir & PASS_MEM2REG)
 		show_entry(ep);
 
