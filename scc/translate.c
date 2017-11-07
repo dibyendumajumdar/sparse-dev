@@ -332,8 +332,8 @@ static void translate_cast(struct instruction *insn)
 	}
 
 	if (new_size < old_size) {
-		op = INSN_AND;
-		val = (1ULL << new_size) - 1;
+		op = INSN_TRUNC;
+		val = new_size;
 	} else if (old_size == new_size) {	// FIXME
 		op = INSN_COPY;
 	} else if (op == INSN_SCAST || op == INSN_CAST) {
@@ -363,7 +363,7 @@ static void translate_cast(struct instruction *insn)
 
 	s = alloc_state(op, insn->target, insn);
 	s->kids[0] = get_src_state(insn->bb, insn->src1);
-	if (op == INSN_AND || op == INSN_SCAST || op == INSN_CAST)
+	if (op == INSN_TRUNC || op == INSN_SCAST || op == INSN_CAST)
 		s->kids[1] = get_src_state(insn->bb, value_pseudo(val));
 	label_state(s);
 }
