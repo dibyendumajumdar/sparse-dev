@@ -198,7 +198,7 @@ static const char *show_rule(const struct rule *r)
 	return buf;
 }
 
-static void generate_includes(void)
+static void generate_includes(const char *arch)
 {
 	printf("#include <stdio.h>\n");
 	printf("#include <stdlib.h>\n");
@@ -564,7 +564,7 @@ int main(int argc, const char *argv[])
 		return 1;
 
 	printf("/* Automatically generated from %s */\n\n", argv[1]);
-	generate_includes();
+	generate_includes(argv[2]);
 	generate_nterms();
 	generate_opcodes();
 	generate_rules();

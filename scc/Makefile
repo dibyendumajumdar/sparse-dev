@@ -36,7 +36,7 @@ gen-%.o: gen-%.c gen-common.c	# is included into the generated file
 
 gen-%.c: %.smd codegen
 	@echo "  GEN     $@"
-	$(Q)./codegen $< < $< > $@
+	$(Q)./codegen $< $* < $< > $@
 
 codegen: $(cg-objs)
 	@echo "  HLD     $@"
