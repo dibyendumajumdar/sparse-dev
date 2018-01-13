@@ -34,6 +34,8 @@ static struct ptree *tree(const char *, int, int, struct ptree *, struct ptree *
 %token			SIZEH		/* '.H' */
 %token			SIZEL		/* '.L' */
 %token			SIZEQ		/* '.Q' */
+%token			SIZES		/* '.S' */
+%token			SIZED		/* '.D' */
 %type	<nt>		lhs
 %type   <tree>		tree
 %type   <val>		cost
@@ -81,6 +83,8 @@ size	: %empty		{ $$ = 0; }
 	| SIZEH			{ $$ = 2; }
 	| SIZEL			{ $$ = 3; }
 	| SIZEQ			{ $$ = 4; }
+	| SIZES			{ $$ = 6; }
+	| SIZED			{ $$ = 7; }
 	;
 
 cost	: %empty		{ $$ = 0; }
@@ -183,6 +187,8 @@ static int yylex(void)
 			case 'H': return SIZEH;
 			case 'L': return SIZEL;
 			case 'Q': return SIZEQ;
+			case 'S': return SIZES;
+			case 'D': return SIZED;
 			default:  buffp--;
 			}
 
