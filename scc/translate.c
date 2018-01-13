@@ -297,6 +297,19 @@ static void translate_memop(struct instruction *insn)
 		}
 	}
 
+	if (is_float_type(insn->type)) {
+		switch (op) {
+		case OP_LOAD:
+			op = INSN_FLOAD;
+			break;
+		case OP_STORE:
+			op = INSN_FSTORE;
+			break;
+		default:
+			break;
+		}
+	}
+
 	s = alloc_state(op, insn->target, insn);
 	if (insn->offset) {
 		struct cg_state* addr = alloc_state(INSN_ADD, insn->src, insn);
@@ -418,6 +431,7 @@ static void translate_insn(struct instruction *insn)
 
 	case OP_BINARY ... OP_BINARY_END:
 	case OP_BINCMP ... OP_BINCMP_END:
+	case OP_FPCMP ... OP_FPCMP_END:
 		translate_binop(insn);
 		break;
 	case OP_NOT:
@@ -428,6 +442,7 @@ static void translate_insn(struct instruction *insn)
 			break;
 		}
 	case OP_NEG:
+	case OP_FNEG:
 	case OP_COPY:
 		translate_unop(insn);
 		break;
@@ -439,6 +454,7 @@ static void translate_insn(struct instruction *insn)
 	case OP_PTRCAST:
 	case OP_CAST:
 	case OP_SCAST:
+	case OP_FPCAST:
 		translate_cast(insn);
 		break;
 
@@ -486,7 +502,6 @@ static void translate_insn(struct instruction *insn)
 	case OP_PHISOURCE:
 		// Should never happen if unSSA is used
 
-	case OP_FPCAST:
 	case OP_SLICE:
 	case OP_ASM:
 		translate_default(insn);
