@@ -123,6 +123,64 @@ static int is_pow2(pseudo_t v)
 	return __builtin_ffsll(val) - 1;
 }
 
+static int is_rotate(struct instruction *insn)
+{
+	struct instruction *insn1;
+	struct instruction *insn2;
+	pseudo_t shift1, shift2;
+	unsigned long long val1, val2;
+	int op = insn->opcode;
+
+	if (op != INSN_OR && op != INSN_XOR && op != INSN_ADD)
+		return 0;
+
+	if (insn->src1->type != PSEUDO_REG)
+		return 0;
+	insn1 = insn->src1->def;
+	if (insn->src2->type != PSEUDO_REG)
+		return 0;
+	insn2 = insn->src2->def;
+
+
+	// need to operate on the same operand
+	if (insn1->src1 != insn2->src1)
+		return 0;
+
+	// use communativity to put LSR first
+	if (insn1->opcode != INSN_LSR) {
+		insn1 = insn2;
+		if (insn1->opcode != INSN_LSR)
+			return 0;
+		insn2 = insn->src1->def;
+	}
+
+	if (insn2->opcode != INSN_SHL)
+		return 0;
+
+	// now check that the shifts match
+	shift1 = insn1->src2;
+	shift2 = insn2->src2;
+	if (shift1->type != PSEUDO_VAL)
+		return 0;
+	val1 = shift1->value;
+	if (shift2->type != PSEUDO_VAL)
+		return 0;
+	val2 = shift2->value;
+	if ((val1 + val2) != insn->size)
+		return 0;
+	if (val1 >= insn->size)
+		return 0;
+	if (val2 >= insn->size)
+		return 0;
+
+	// avoid to generate code for those ones
+	// FIXME: we should have a cleaner method to do this?
+	insn1->bb = NULL;
+	insn2->bb = NULL;
+
+	return val1;
+}
+
 static void translate_binop(struct instruction *insn)
 {
 	pseudo_t src1 = insn->src1;
@@ -130,10 +188,16 @@ static void translate_binop(struct instruction *insn)
 	int op = insn->opcode;
 	struct cg_state *s;
 	int lsl = 0;
+	int rot;
 
 	if (op == INSN_MUL && (lsl = is_pow2(src2))) {
 		op = INSN_SHL;
 		src2 = value_pseudo(lsl);
+	}
+	if ((rot = is_rotate(insn))) {
+		op = INSN_ROR;
+		src1 = insn->src1->def->src1;
+		src2 = value_pseudo(rot);
 	}
 
 	s = alloc_state(op, insn->target, insn);
