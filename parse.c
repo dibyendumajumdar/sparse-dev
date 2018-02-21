@@ -641,6 +641,29 @@ static void apply_modifiers(struct position pos, struct decl_state *ctx)
 	
 }
 
+static struct symbol *apply_bitwise(struct position pos, struct ctype *ctx)
+{
+	struct symbol *old = ctx->base_type;
+	struct symbol *type;
+
+	if (!(ctx->modifiers & MOD_BITWISE))
+		return old;
+
+	ctx->modifiers &= ~MOD_BITWISE;
+	if (!is_int_type(old)) {
+		sparse_error(pos, "invalid modifier");
+		return old;
+	}
+	type = alloc_symbol(pos, SYM_BASETYPE);
+	*type = *ctx->base_type;
+	type->ctype.modifiers &= ~MOD_SPECIFIER;
+	type->ctype.base_type = old;
+	type->type = SYM_RESTRICT;
+	ctx->base_type = type;
+	create_fouled(type);
+	return type;
+}
+
 static struct symbol * alloc_indirect_symbol(struct position pos, struct ctype *ctype, int type)
 {
 	struct symbol *sym = alloc_symbol(pos, type);
@@ -1543,21 +1566,9 @@ static struct token *declaration_specifiers(struct token *token, struct decl_sta
 		ctx->ctype.base_type = base;
 	}
 
-	if (ctx->ctype.modifiers & MOD_BITWISE) {
-		struct symbol *type;
-		ctx->ctype.modifiers &= ~MOD_BITWISE;
-		if (!is_int_type(ctx->ctype.base_type)) {
-			sparse_error(token->pos, "invalid modifier");
-			return token;
-		}
-		type = alloc_symbol(token->pos, SYM_BASETYPE);
-		*type = *ctx->ctype.base_type;
-		type->ctype.modifiers &= ~MOD_SPECIFIER;
-		type->ctype.base_type = ctx->ctype.base_type;
-		type->type = SYM_RESTRICT;
-		ctx->ctype.base_type = type;
-		create_fouled(type);
-	}
+	if (ctx->ctype.modifiers & MOD_BITWISE)
+		apply_bitwise(token->pos, &ctx->ctype);
+
 	return token;
 }
 
