@@ -696,10 +696,11 @@ static struct token *struct_union_enum_specifier(enum type type,
 	struct token *token, struct decl_state *ctx,
 	struct token *(*parse)(struct token *, struct symbol *))
 {
+	struct decl_state type_attr = { };
 	struct symbol *sym;
 	struct position *repos;
 
-	token = handle_attributes(token, ctx, KW_ATTRIBUTE);
+	token = handle_attributes(token, &type_attr, KW_ATTRIBUTE);
 	if (token_type(token) == TOKEN_IDENT) {
 		sym = lookup_symbol(token->ident, NS_STRUCT);
 		if (!sym ||
@@ -712,6 +713,12 @@ static struct token *struct_union_enum_specifier(enum type type,
 		}
 		if (sym->type != type)
 			error_die(token->pos, "invalid tag applied to %s", show_typename (sym));
+
+		// FIXME: should apply all modifiers
+		type_attr.ctype.base_type = sym;
+		if (type == SYM_ENUM)	// FIXME: see is_int_type()
+			sym->ctype.base_type = &int_ctype;
+		sym = apply_bitwise(token->pos, &type_attr.ctype);
 		ctx->ctype.base_type = sym;
 		repos = &token->pos;
 		token = token->next;
@@ -860,8 +867,11 @@ static struct token *parse_enum_declaration(struct token *token, struct symbol *
 	struct symbol *ctype = NULL, *base_type = NULL;
 	Num upper = {-1, 0}, lower = {1, 0};
 
-	parent->examined = 1;
-	parent->ctype.base_type = &int_ctype;
+	if (parent->type == SYM_RESTRICT)
+		parent->ctype.base_type->ctype.base_type = &int_ctype;
+	else
+		parent->ctype.base_type = &int_ctype;
+	examine_symbol_type(parent);
 	while (token_type(token) == TOKEN_IDENT) {
 		struct expression *expr = NULL;
 		struct token *next = token->next;
@@ -886,6 +896,8 @@ static struct token *parse_enum_declaration(struct token *token, struct symbol *
 			expr->value = lastval;
 			expr->ctype = ctype;
 		}
+		if (parent->type == SYM_RESTRICT)
+			expr->ctype = parent;
 
 		sym = alloc_symbol(token->pos, SYM_NODE);
 		bind_symbol(sym, token->ident, NS_SYMBOL);
@@ -897,6 +909,8 @@ static struct token *parse_enum_declaration(struct token *token, struct symbol *
 
 		if (base_type != &bad_ctype) {
 			if (ctype->type == SYM_NODE)
+				ctype = ctype->ctype.base_type;
+			if (ctype->type == SYM_RESTRICT)
 				ctype = ctype->ctype.base_type;
 			if (ctype->type == SYM_ENUM) {
 				if (ctype == parent)

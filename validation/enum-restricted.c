@@ -18,5 +18,4 @@ static void foo(void)
 
 /*
  * check-name: enum-restricted
- * check-known-to-fail
  */
