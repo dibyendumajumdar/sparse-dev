@@ -11,6 +11,7 @@ User documentation
 .. toctree::
    :maxdepth: 1
 
+   sparse
    nocast-vs-bitwise
 
 Developer documentation

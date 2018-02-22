@@ -152,6 +152,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
+	('sparse', 'sparse', u'Semantic Parser for C', [u'Linus Torvalds', author], 1),
 ]
 
 
