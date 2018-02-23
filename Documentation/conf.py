@@ -18,6 +18,7 @@
 #
 # import os
 # import sys
+import datetime
 
 # -- General configuration ------------------------------------------------
 
@@ -48,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'sparse'
-copyright = '2017'
+copyright = '2003 - ' + str(datetime.datetime.now().year)
 author = "sparse's development community"
 
 # The version info for the project you're documenting, acts as replacement for
