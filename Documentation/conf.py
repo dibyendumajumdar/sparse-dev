@@ -153,6 +153,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
 	('sparse', 'sparse', u'Semantic Parser for C', [u'Linus Torvalds', author], 1),
+	('dev-options', 'dev-options', u'options for development', [author], 1),
 ]
 
 
