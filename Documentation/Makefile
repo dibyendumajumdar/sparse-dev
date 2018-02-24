@@ -21,6 +21,6 @@ $(targets): conf.py Makefile
 	@$(SPHINXBUILD) -M  $@  "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS)
 
 %.1: %.rst man
-	@mv build/man/$@ $@
+	@sed '/^\.BI \\-[a-zA-Z]\\fB /s/\\fB //' < build/man/$@ > $@
 
 .PHONY: Makefile	# avoid circular deps with the catch-all rule
