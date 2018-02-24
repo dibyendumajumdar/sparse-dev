@@ -103,7 +103,7 @@ html_sidebars = {
 	]
 }
 
-html_logo = None
+html_logo = 'logo.svg'
 
 # -- Options for HTMLHelp output ------------------------------------------
 
