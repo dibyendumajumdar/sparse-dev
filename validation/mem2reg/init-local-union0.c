@@ -15,4 +15,5 @@ double uintfloat(void)
  * check-output-ignore
  * check-output-pattern(1): store\\.32
  * check-output-pattern(1): load\\.64
+ * check-output-excludes: ret\\.*\\$1
  */

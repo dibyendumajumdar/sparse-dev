@@ -1,14 +1,4 @@
-int ssimple(void)
-{
-	struct {
-		int a;
-	} s;
-
-	s.a = 1;
-	return s.a;
-}
-
-double sdouble(void)
+static double local_float(void)
 {
 	struct {
 		double a;
@@ -20,7 +10,7 @@ double sdouble(void)
 
 /*
  * check-name: init-local
- * check-command: test-linearize -Wno-decl -fdump-ir=mem2reg $file
+ * check-command: test-linearize $file
  * check-output-ignore
  * check-output-excludes: load\\.
  * check-output-excludes: store\\.
