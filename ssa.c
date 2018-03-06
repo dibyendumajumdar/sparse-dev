@@ -299,27 +299,7 @@ static void ssa_rename_insn(struct basic_block *bb, struct instruction *insn)
 	}
 }
 
-static void ssa_rename_phi(struct basic_block *bb, struct instruction *insn)
-{
-	struct basic_block *par;
-	struct symbol *var;
-
-	if (!insn->phi_var)
-		return;
-	var = insn->phi_var->sym;
-	if (!var->torename)
-		return;
-	FOR_EACH_PTR(bb->parents, par) {
-		struct instruction *term = delete_last_instruction(&par->insns);
-		pseudo_t val = lookup_var(par, var);
-		pseudo_t phi = alloc_phi(par, val, var);
-		phi->ident = var->ident;
-		add_instruction(&par->insns, term);
-		use_pseudo(insn, phi, add_pseudo(&insn->phi_list, phi));
-	} END_FOR_EACH_PTR(par);
-}
-
-static void ssa_rename_vars(struct entrypoint *ep)
+static void ssa_rename_insns(struct entrypoint *ep)
 {
 	struct basic_block *bb;
 
@@ -331,13 +311,39 @@ static void ssa_rename_vars(struct entrypoint *ep)
 			ssa_rename_insn(bb, insn);
 		} END_FOR_EACH_PTR(insn);
 	} END_FOR_EACH_PTR(bb);
+}
+
+static void ssa_rename_phi(struct instruction *insn)
+{
+	struct basic_block *par;
+	struct symbol *var;
+
+	if (!insn->phi_var)
+		return;
+	var = insn->phi_var->sym;
+	if (!var->torename)
+		return;
+	FOR_EACH_PTR(insn->bb->parents, par) {
+		struct instruction *term = delete_last_instruction(&par->insns);
+		pseudo_t val = lookup_var(par, var);
+		pseudo_t phi = alloc_phi(par, val, var);
+		phi->ident = var->ident;
+		add_instruction(&par->insns, term);
+		use_pseudo(insn, phi, add_pseudo(&insn->phi_list, phi));
+	} END_FOR_EACH_PTR(par);
+}
+
+static void ssa_rename_phis(struct entrypoint *ep)
+{
+	struct basic_block *bb;
+
 
 	FOR_EACH_PTR(ep->bbs, bb) {
 		struct instruction *insn;
 		FOR_EACH_PTR(bb->insns, insn) {
 			if (!insn->bb || insn->opcode != OP_PHI)
 				continue;
-			ssa_rename_phi(bb, insn);
+			ssa_rename_phi(insn);
 		} END_FOR_EACH_PTR(insn);
 	} END_FOR_EACH_PTR(bb);
 }
@@ -365,5 +371,6 @@ void ssa_convert(struct entrypoint *ep)
 	} END_FOR_EACH_PTR(pseudo);
 
 	// rename the converted accesses
-	ssa_rename_vars(ep);
+	ssa_rename_insns(ep);
+	ssa_rename_phis(ep);
 }
