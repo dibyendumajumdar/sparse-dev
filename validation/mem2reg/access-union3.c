@@ -17,7 +17,6 @@ static dbl foo(void)
 /*
  * check-name: access-union3
  * check-command: test-linearize -fdump-ir=mem2reg $file
- * check-known-to-fail
  *
  * check-output-ignore
  * check-output-pattern(1): load\\.

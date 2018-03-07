@@ -367,6 +367,10 @@ int dominates(pseudo_t pseudo, struct instruction *insn, struct instruction *dom
 			return 0;
 		return -1;
 	}
+	if (!insn->type || !dom->type)
+		return -1;
+	if (is_float_type(insn->type) != is_float_type(dom->type))
+		return -1;
 	return 1;
 }
 
