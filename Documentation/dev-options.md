@@ -31,5 +31,6 @@ document options only useful for development on sparse itself.
 
   Add or display some debug info. The flag can be one of:
   * 'dead': annotate dead pseudos.
+  * 'domtree': dump the dominance tree after its calculation.
   * 'entry': dump the IR after all optimization passes.
   * 'postorder': dump the reverse postorder traversal of the CFG.
