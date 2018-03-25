@@ -196,6 +196,7 @@ struct symbol {
 		};
 	};
 	pseudo_t pseudo;
+	void *priv;
 };
 
 /* Modifiers */

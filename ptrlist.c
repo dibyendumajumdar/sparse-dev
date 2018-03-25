@@ -246,3 +246,18 @@ void __free_ptr_list(struct ptr_list **listp)
 
 	*listp = NULL;
 }
+
+void *ptr_list_nth_entry(struct ptr_list *list, unsigned int idx)
+{
+	struct ptr_list *head = list;
+	if (!head)
+		return NULL;
+	do {
+		unsigned int nr = list->nr;
+		if (idx < nr)
+			return list->list[idx];
+		else
+			idx -= nr;
+	} while ((list = list->next) != head);
+	return NULL;
+}
