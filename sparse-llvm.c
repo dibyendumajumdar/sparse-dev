@@ -1707,6 +1707,7 @@ static LLVMValueRef output_fn(LLVMModuleRef module, struct entrypoint *ep)
 	struct symbol *arg;
 	const char *name;
 	int nr_args = 0;
+	int i;
 
 	FOR_EACH_PTR(base_type->arguments, arg) {
 		if (nr_args >= MAX_ARGS)
@@ -1740,7 +1741,7 @@ static LLVMValueRef output_fn(LLVMModuleRef module, struct entrypoint *ep)
 	function.builder = LLVMCreateBuilderInContext(LLVMGetModuleContext(module));
 
 	/* give a name to each argument */
-	for (int i = 0; i < nr_args; i++) {
+	for (i = 0; i < nr_args; i++) {
 		char name[MAX_PSEUDO_NAME];
 		LLVMValueRef arg;
 
