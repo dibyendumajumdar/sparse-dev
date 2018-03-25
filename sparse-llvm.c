@@ -2004,7 +2004,7 @@ bool llvmcompile(int argc, char **argv, LLVMModuleRef module, int output_fileno)
 		linearize.c which sets
 		phi_users list on PHISOURCE instructions  */
 		dbg_dead = 1;
-		FOR_EACH_PTR(filelist, file)
+		FOR_EACH_PTR_NOTAG(filelist, file)
 		{
 			symlist = sparse(file);
 			if (die_if_error) {
@@ -2016,7 +2016,7 @@ bool llvmcompile(int argc, char **argv, LLVMModuleRef module, int output_fileno)
 				break;
 			}
 		}
-		END_FOR_EACH_PTR(file);
+		END_FOR_EACH_PTR_NOTAG(file);
 	}
 	else
 		rc = 1;
@@ -2054,6 +2054,6 @@ int main(int argc, char **argv)
 	module = LLVMModuleCreateWithName("sparse");
 	int success = llvmcompile(argc, argv, module, STDOUT_FILENO);
 	LLVMDisposeModule(module);
-	report_stats();
+	//report_stats();
 	return success ? 0 : 1;
 }
