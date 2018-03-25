@@ -1216,7 +1216,7 @@ static LLVMValueRef output_op_switch(struct function *fn, struct instruction *in
 			def = jmp->target;
 	} END_FOR_EACH_PTR(jmp);
 
-	sw_val = pseudo_to_value(fn, insn->type, insn->target);
+	sw_val = pseudo_to_value(fn, insn->type, insn->cond);
 	if (!sw_val)
 		return NULL;
 	target = LLVMBuildSwitch(fn->builder, sw_val,
